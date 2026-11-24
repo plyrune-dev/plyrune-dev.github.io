@@ -586,7 +586,7 @@ a:hover { text-decoration-thickness: 2px; }
 .site-foot .textlink { justify-self: start; }
 @media (min-width: 820px) {
   .site-foot .wrap { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
-  .site-foot .textlink { grid-column: 2; grid-row: 1 / span 3; }
+  .site-foot .textlink { grid-column: 2; grid-row: 1 / span 4; }
 }
 
 /* ---------- forced colours (Windows High Contrast): links stay distinguishable by underline ---------- */
