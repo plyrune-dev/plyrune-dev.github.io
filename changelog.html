@@ -16,12 +16,18 @@
     <header class="section__head">
       <p class="eyebrow">Shipping notes</p>
       <h1>Changelog</h1>
-      <p>What changed, how we checked it, and where you can try it. There is no installable release yet.</p>
+      <p>What changed, how we checked it, and where you can try it.</p>
     </header>
+    <article class="section" id="preview-1">
+      <p class="eyebrow"><time datetime="2026-11-24">24 November 2026</time> · v0.0.1-preview.1</p>
+      <h2>Install Plyrune and try a stale snapshot</h2>
+      <p><a href="index.html#install">Install the Linux x86-64 CLI</a> and run <code>plyrune demo</code>. It reads <code>legacy_endpoint</code> from a precise byte range, changes a different file in memory, and shows why the old inspection now refuses.</p>
+      <p>The sixth Lean claim covers snapshot-key equality and exact range refusal. Installed-binary controls cover path lookup, UTF-8, the display cap and the CLI. This preview does not edit files or certify a migration.</p>
+    </article>
     <article class="section" id="2026-11-24">
       <p class="eyebrow"><time datetime="2026-11-24">24 November 2026</time> · Development checkpoint</p>
       <h2>A reproducible reference for the first migration</h2>
-      <p><strong>Kernel proof:</strong> a range presented from a different owner or store incarnation is refused before its offsets are considered. For the same store, the exact text-range decision is preserved. The <a href="https://github.com/plyrune-dev/plyrune/blob/main/proofs/claims.json">Lean gate record</a> covers five kernel claims, including this one. It does not establish full capture identity or migration coverage.</p>
+      <p><strong>Kernel proof:</strong> a range presented from a different owner or store incarnation is refused before its offsets are considered. For the same store, the exact text-range decision is preserved. The <a href="https://github.com/plyrune-dev/plyrune/blob/a93eeda/proofs/claims.json">Lean gate record at this checkpoint</a> covers five kernel claims, including this one. It does not establish full capture identity or migration coverage.</p>
       <p><strong>Now open source:</strong> <a href="https://github.com/plyrune-dev/plyrune">build Plyrune from its MIT-licensed source</a>. An <a href="https://github.com/plyrune-dev/plyrune/tree/main/examples/writfold">optional Writfold gate</a> checks fixture identity using the same command as standalone CI. This checks a snapshot, not the correctness of an edit.</p>
       <p>The six native fixture tasks now record their actual outputs and the identities of their inputs. The build compares each rerun with the saved trace. One case shows why scope matters: replacing both matches under <code>config/server/</code> still misses four required replacements elsewhere. These are correctness checks, not performance measurements.</p>
       <p><strong>Live on Pages:</strong> the <a href="index.html#assurance">assurance record</a> separates the current developer build from planned operations. The <a href="measurements.json">measurement record</a> has no benchmark trials yet.</p>

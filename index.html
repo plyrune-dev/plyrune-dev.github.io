@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plyrune: one interface from source to checked change (planned)</title>
-  <meta name="description" content="Plyrune is a planned engineering toolkit that gives coding agents one interface for finding source, retaining exact captures, inspecting bounded views, preparing candidate edits and checking declared obligations. Not released; nothing to install yet.">
+  <title>Plyrune: inspect text from an exact snapshot</title>
+  <meta name="description" content="Install the Plyrune preview for Linux x86-64. Inspect text from an exact snapshot and try a stale-input refusal.">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#F5F2EA" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#111F1B" media="(prefers-color-scheme: dark)">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Plyrune">
   <meta property="og:title" content="Plyrune: source to change, without losing the thread">
-  <meta property="og:description" content="A planned engineering toolkit: one harness-agnostic interface for source queries, retained captures, bounded views, candidate edits and declared checks. Not released; nothing to install yet.">
+  <meta property="og:description" content="Try a proof-backed snapshot inspection in the first installable Plyrune preview.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
   <link rel="alternate icon" href="brand/favicon.ico" sizes="16x16 32x32 48x48">
@@ -67,10 +67,11 @@
 
   <section class="hero wrap" aria-labelledby="hero-title">
     <div class="hero__copy">
-      <p><span class="chip chip--planned">Planned · not released</span></p>
+      <p><span class="chip chip--wip">CLI preview · Linux x86-64 / WSL2</span></p>
       <h1 id="hero-title">Source to change, without losing the thread.</h1>
-      <p class="lede">Plyrune (pronounced “PLY-roon”) is a planned engineering toolkit. It gives a coding agent one interface for finding source, keeping exact captures, inspecting bounded views, preparing candidate edits and checking declared obligations.</p>
-      <p class="lede">Nothing is released yet. This page sets out the design and says plainly what is available, what is only planned and what has not been measured. It is not a running Plyrune engine.</p>
+      <p class="lede">Inspect a slice of text from an exact snapshot. Change even an unrelated file in the fixture and the old request is refused. Try it in two commands:</p>
+      <p id="install"><code>curl -fsSL https://plyrune-dev.github.io/install.sh | sh</code><br><code>"$HOME/.local/bin/plyrune" demo</code></p>
+      <p>The <a href="install.sh">installer</a> checks the pinned binary and places it in your user bin directory. No sudo, Rust or Docker required. <a href="https://github.com/plyrune-dev/plyrune/releases/tag/v0.0.1-preview.1">Download the preview directly</a>.</p>
       <div class="actions">
         <a class="button button--primary" href="#interface">See the interface</a>
         <a class="button" href="#assurance">What is and is not claimed</a>
@@ -214,10 +215,10 @@
         <article aria-labelledby="avail-title">
           <span class="chip chip--wip">Developer build</span>
           <h3 id="avail-title">Available today</h3>
-          <p>The <a href="https://github.com/plyrune-dev/plyrune">open-source developer build</a> includes <code>plyrune snapshot</code> since revision <code>d148a15</code>. It identifies a fixture manifest. There is no tagged release yet.</p>
+          <p><a href="#install">Install the preview</a> to identify an immutable fixture with <code>snapshot</code> and extract text by snapshot, exact path and byte offsets with <code>inspect</code>.</p>
           <ul class="ops" role="list">
             <li><span>query</span><span>not available</span></li>
-            <li><span>inspect</span><span>not available</span></li>
+            <li><span>inspect</span><span>fixture byte range</span></li>
             <li><span>prepare</span><span>not available</span></li>
             <li><span>check</span><span>not available</span></li>
           </ul>
@@ -390,7 +391,7 @@
 <footer class="site-foot">
   <div class="wrap">
     <p>Plyrune · in development · <a href="changelog.html">Shipping notes</a></p>
-    <p>Build from <a href="https://github.com/plyrune-dev/plyrune">source on GitHub</a>. No tagged release or measured performance result yet.</p>
+    <p>Build from <a href="https://github.com/plyrune-dev/plyrune">source on GitHub</a> or <a href="#install">try the CLI preview</a>. No measured performance result yet.</p>
     <p>The page sets no cookies and loads nothing from other origins. Its host, GitHub Pages, logs visitor IP addresses for security.</p>
     <a class="textlink" href="#top">Back to top</a>
   </div>
