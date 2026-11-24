@@ -57,6 +57,10 @@
   --code-acc: #96D0B8;
 }
 
+/* Gutters widen with the viewport: 20 px on phones, 28 px from 640 px, 40 px from 980 px. */
+@media (min-width: 640px) { :root { --gutter: 28px; } }
+@media (min-width: 980px) { :root { --gutter: 40px; } }
+
 *,
 ::before,
 ::after { box-sizing: border-box; }
