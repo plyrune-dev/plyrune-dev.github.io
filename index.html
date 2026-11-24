@@ -1,77 +1,434 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" id="top">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Plyrune design preview: one proposed interface for source queries, retained captures, candidate edits and declared checks.">
-  <title>Plyrune — design preview</title>
-  <style>
-    :root{color-scheme:light;--paper:#f5f2ea;--ink:#172923;--muted:#506058;--line:#b9c2b7;--green:#236a57;--accent:#a84f32;--panel:#eaece4;--on-green:#fff;--max:1240px}
-    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55}body.dark{color-scheme:dark;--paper:#111f1b;--ink:#f5f2ea;--muted:#b7c5bc;--line:#4b6a5b;--green:#96d0b8;--accent:#eda185;--panel:#1b3027;--on-green:#111f1b}a{color:inherit;text-underline-offset:5px}button,a{touch-action:manipulation}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:5px}.wrap{max-width:var(--max);margin:auto;padding:0 40px}.skip{position:absolute;left:20px;top:-80px;background:var(--ink);color:var(--paper);padding:12px;z-index:10}.skip:focus{top:12px}header{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:104px;border-bottom:1px solid var(--line)}.wordmark{font-size:32px;font-weight:760;letter-spacing:-1.5px;text-decoration:none}.wordmark span{color:var(--green)}nav{display:flex;gap:28px;align-items:center;font-size:14px;font-weight:600}nav a{text-decoration:none}.theme{border:1px solid var(--line);color:var(--ink);background:transparent;padding:8px 12px;min-height:44px}.eyebrow,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:700;color:var(--muted)}.preview{display:inline-block;color:var(--accent);border:1px solid var(--accent);padding:5px 10px;border-radius:30px;font:11px ui-monospace,monospace;letter-spacing:.04em}.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:64px;padding:76px 0 70px;align-items:center}h1{font-size:clamp(42px,5.1vw,69px);line-height:1.05;letter-spacing:-.065em;margin:23px 0 26px;font-weight:680}h2{font-size:clamp(30px,3.8vw,46px);line-height:1.12;letter-spacing:-.045em;margin:12px 0 24px;font-weight:650}h3{font-size:21px;letter-spacing:-.025em;margin:0 0 14px}.lead{font-size:18px;color:var(--muted);max-width:530px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.button{display:inline-block;text-decoration:none;border:1px solid var(--ink);padding:12px 18px;font-size:14px;font-weight:650;min-height:46px}.button.primary{background:var(--green);color:var(--on-green);border-color:var(--green)}.flow{border:1px solid var(--line);padding:28px;background:var(--panel)}.flow header{min-height:0;padding-bottom:20px;display:block}.flow ol{list-style:none;margin:28px 0;padding:0;border-left:2px solid var(--green)}.flow li{position:relative;padding:13px 10px 13px 26px;font:13px ui-monospace,monospace}.flow li:before{content:"";position:absolute;left:-6px;top:17px;width:10px;height:10px;background:var(--green);border-radius:50%}.flow strong{display:block;font:600 17px system-ui,sans-serif;margin-bottom:3px}.flow .note{font-size:12px;border-top:1px solid var(--line);padding-top:18px;margin:0;color:var(--muted)}.strap{background:var(--ink);color:var(--paper);padding:20px 28px;font-size:clamp(17px,2.2vw,27px);font-weight:550;letter-spacing:-.02em}.section{padding:72px 0;border-bottom:1px solid var(--line)}.split{display:grid;grid-template-columns:1fr 1fr;gap:32px}.panel{padding:26px;border:1px solid var(--line)}.subtle{font-size:14px;color:var(--muted)}.status{font:11px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}.measure{display:flex;justify-content:space-between;gap:20px;padding:14px 0;border-top:1px solid var(--line);font-size:14px}.measure strong{font-weight:500;font-family:ui-monospace,monospace}.small{font-size:12px;color:var(--muted)}.interface-head{max-width:680px}.code{background:var(--ink);color:var(--paper);border:1px solid var(--line);padding:24px;margin:0;overflow-x:auto;white-space:pre;font:12px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace}.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:28px}.example{padding:24px;border:1px solid var(--line);min-width:0}.capture{padding:10px 0;border-bottom:1px solid var(--line);font:12px/1.6 ui-monospace,monospace;overflow-wrap:anywhere}.capture code{color:var(--green)}details{margin-top:16px}summary{cursor:pointer;color:var(--green);font-size:13px;min-height:44px;padding:10px 0}.callout{border-left:3px solid var(--accent);padding:4px 0 4px 16px;color:var(--muted);font-size:14px;margin-top:22px}.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}.roadmap article{border-top:2px solid var(--green);padding-top:18px}.roadmap article p{font-size:14px;color:var(--muted)}.roadmap h3{margin:8px 0}footer{padding:30px 0 42px;display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.assurance-list{padding-left:18px;font-size:14px}.assurance-list li{margin:10px 0}
-    @media(max-width:950px){.hero{gap:30px;grid-template-columns:1fr 1fr}nav{gap:16px}.wrap{padding:0 26px}.example-grid{grid-template-columns:1fr}.roadmap{grid-template-columns:1fr 1fr}}
-    @media(max-width:680px){header{align-items:flex-start;flex-wrap:wrap;padding:24px 0;gap:18px;min-height:0}nav{width:100%;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:12px}.theme{padding:7px 10px}.hero{grid-template-columns:1fr;padding:42px 0;gap:30px}h1{font-size:49px}.lead{font-size:17px}.wrap{padding:0 20px}.split{grid-template-columns:1fr}.section{padding:44px 0}.strap{padding:22px;font-size:20px}.flow{padding:22px}.roadmap{grid-template-columns:1fr}.panel{padding:22px}.code{font-size:11px;padding:18px}.preview{font-size:10px}}
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-    @media print{.theme,.skip{display:none}.wrap{padding:0 20px}.hero{padding-top:30px}body{color:#172923;background:#fff}.section{break-inside:avoid}.code{white-space:pre-wrap}.flow,.panel{break-inside:avoid}}
-  </style>
+  <title>Plyrune: one interface from source to checked change (planned)</title>
+  <meta name="description" content="Plyrune is a planned engineering toolkit that gives coding agents one interface for finding source, retaining exact captures, inspecting bounded views, preparing candidate edits and checking declared obligations. Not released; nothing to install yet.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F5F2EA" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111F1B" media="(prefers-color-scheme: dark)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Plyrune">
+  <meta property="og:title" content="Plyrune: source to change, without losing the thread">
+  <meta property="og:description" content="A planned engineering toolkit: one harness-agnostic interface for source queries, retained captures, bounded views, candidate edits and declared checks. Not released; nothing to install yet.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="brand/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="wrap">
-  <header>
-    <a class="wordmark" href="#main" aria-label="Plyrune home">ply<span>rune</span></a>
-    <nav aria-label="Main navigation">
-      <a href="#interface">Interface</a><a href="#assurance">Assurance</a><a href="#measurements">Measurements</a>
-      <button class="theme" id="theme" type="button" aria-pressed="false">Dark theme</button>
-    </nav>
-  </header>
-  <main id="main">
-    <section class="hero" aria-labelledby="hero-heading">
-      <div>
-        <span class="preview">2.0 / DESIGN PREVIEW</span>
-        <h1 id="hero-heading">Source to change,<br>without losing<br>the thread.</h1>
-        <p class="lead">A proposed shared interface for querying, inspecting and preparing edits. Built for your agent harness.</p>
-        <div class="actions"><a class="button primary" href="#design">Read the design</a><a class="button" href="#interface">Explore the example</a></div>
-      </div>
-      <div class="flow">
-        <header><span class="eyebrow">The proposed flow</span></header>
-        <ol><li><strong>Query</strong>Complete selection over a declared scope</li><li><strong>Inspect, when useful</strong>Bounded view. Full selection retained.</li><li><strong>Prepare</strong>Exact candidate from captured source</li><li><strong>Check</strong>Coverage of an independent requirement</li></ol>
-        <p class="note">First milestone: candidate only. Live publication has a separate host contract.</p>
-      </div>
-    </section>
-    <div class="strap">Shared captures. Explicit scope. Reusable evidence.</div>
-    <section class="section" id="interface" aria-labelledby="interface-heading">
-      <div class="interface-head"><span class="eyebrow">One interface / retained identity</span><h2 id="interface-heading">Inspect a little.<br>Keep the whole selection.</h2><p class="subtle">This illustrative fixture has six required occurrences. Displaying two leaves all six available to the proposed edit and coverage check.</p></div>
-      <div class="example-grid">
-        <div><pre class="code" aria-label="Proposed API pseudocode">// PROPOSED API · NOT EXECUTABLE
-selection = query(snapshot, requirement)
-view      = inspect(selection, limit=2)
-candidate = prepare(selection, replacement)
-report    = check(requirement, candidate)
 
-// The view does not replace the selection.</pre><p class="small">The harness can batch deterministic calls. A model judgment based on inspection needs a later call.</p></div>
-        <div class="example"><div class="status">Illustrative fixture / 2 of 6 shown</div><div class="capture">config/client/app.env : 1<br><code>PRIMARY=legacy_endpoint</code></div><div class="capture">config/client/app.env : 2<br><code>SECONDARY=legacy_endpoint</code></div><details><summary>Inspect the remaining four captures</summary><div class="capture">config/jobs/worker.env : 1<br><code>UPSTREAM=legacy_endpoint</code></div><div class="capture">config/jobs/worker.env : 2<br><code>BACKUP=legacy_endpoint</code></div><div class="capture">config/server/api.env : 1<br><code>API_URL=legacy_endpoint</code></div><div class="capture">config/server/api.env : 2<br><code>FALLBACK=legacy_endpoint</code></div></details><p class="small">Scope: all regular UTF-8 files under config/. Requirement: replace every exact legacy_endpoint occurrence. This is a static example, not a running Plyrune engine.</p></div>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 288.4 100" role="img" aria-labelledby="brand-title" focusable="false">
+        <title id="brand-title">Plyrune</title>
+        <g transform="translate(12.5 16.7155)" fill="currentColor">
+          <path d="M30 0L62 0L75 13L75 27L62 40L32.426 40L15 57.426L15 66.569L25 66.569L25 61.569L56.569 30L57.858 30L65 22.858L65 17.142L57.858 10L34.142 10L19.142 25L0 25L0 15L15 15Z"/>
+          <path d="M0 45L20.355 45L10.355 55L0 55Z"/>
+          <path class="accent" d="M0 30L21.213 30L36.213 15L52.858 15L65 17.142L65 22.858L62.858 25L40.355 25L25.355 40L0 40Z"/>
+        </g>
+        <g transform="translate(109.5 50) scale(0.26)" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M10 0V140"/>
+          <path d="M10 50A40 41.5 0 1 1 90 50A40 41.5 0 1 1 10 50"/>
+          <path d="M125 -45V100"/>
+          <path d="M222 0V140"/>
+          <path d="M254 0V100"/>
+          <path d="M254 42A32 32 0 0 1 286 10H300"/>
+          <path d="M403 0V50A40.03 40.03 0 0 1 323 50V0"/>
+          <path d="M435 0V100"/>
+          <path d="M435 50A40.03 40.03 0 0 1 515 50V100"/>
+          <path d="M622.78 73.81A40 41.5 0 1 1 630 50H550"/>
+          <g fill="currentColor" stroke="none"><path d="M150 0H173.532L212 37.955V100Z"/></g>
+        </g>
+      </svg>
+    </a>
+    <nav class="site-nav" aria-label="Sections">
+      <ul>
+        <li><a href="#interface">Interface</a></li>
+        <li><a href="#assurance">Assurance</a></li>
+        <li><a href="#measurements">Measurements</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#evaluation">Evaluation</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" type="button" data-theme-toggle data-next="dark" aria-label="Switch to dark theme" hidden>
+      <svg data-icon="dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.6A8.7 8.7 0 0 1 9.4 3.5a8.7 8.7 0 1 0 11.1 11.1Z"/></svg>
+      <svg data-icon="light" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>
+      <span data-theme-label>Dark theme</span>
+    </button>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <div class="hero__copy">
+      <p><span class="chip chip--planned">Planned · not released</span></p>
+      <h1 id="hero-title">Source to change, without losing the thread.</h1>
+      <p class="lede">Plyrune (pronounced “PLY-roon”) is a planned engineering toolkit. It gives a coding agent one interface for finding source, keeping exact captures, inspecting bounded views, preparing candidate edits and checking declared obligations.</p>
+      <p class="lede">Nothing is released yet. This page sets out the design and says plainly what is available, what is only planned and what has not been measured. It is not a running Plyrune engine.</p>
+      <div class="actions">
+        <a class="button button--primary" href="#interface">See the interface</a>
+        <a class="button" href="#assurance">What is and is not claimed</a>
       </div>
-    </section>
-    <section class="section" id="assurance" aria-labelledby="evidence-heading">
-      <span class="eyebrow">Evidence / separate claims</span><h2 id="evidence-heading">Show what holds.<br>Measure what helps.</h2>
-      <div class="split">
-        <article class="panel"><div class="status">Planned composition claims</div><h3>Assurance</h3><ul class="assurance-list"><li>Captured identities survive each transformation.</li><li>Untouched bytes are preserved in the candidate.</li><li>Coverage answers the independently defined requirement.</li><li>Reports name the exact candidate and premises.</li></ul><p class="small">Existing Splicery and Weft kernel proofs keep their separate scope. No new Plyrune composition proof is claimed here.</p></article>
-        <article class="panel" id="measurements"><div class="status">Not measured yet</div><h3>Task outcomes</h3><div class="measure"><span>Task success</span><strong>—</strong></div><div class="measure"><span>Time to correct result</span><strong>—</strong></div><div class="measure"><span>Model cost</span><strong>—</strong></div><div class="measure"><span>Recovery and false refusals</span><strong>—</strong></div><p class="small">No trials have been run for Plyrune 2.0. Results will include failures, baselines, raw records and uncertainty.</p><a href="#evaluation">Read the evaluation approach →</a></article>
+    </div>
+
+    <div class="flow" role="group" aria-labelledby="flow-title" aria-describedby="flow-note">
+      <div class="flow__head">
+        <p class="eyebrow" id="flow-title">The proposed flow</p>
+        <p class="eyebrow">Design vocabulary, not an API</p>
       </div>
-      <p class="callout">A check about an immutable candidate is different from permission to write a changing workspace. Live application is a later, separately qualified protocol.</p>
-    </section>
-    <section class="section" id="design" aria-labelledby="design-heading"><span class="eyebrow">Delivery / six milestones</span><h2 id="design-heading">Prove the small path.<br>Then earn the larger one.</h2><div class="roadmap"><article><span class="mono">M0 / M1</span><h3>Contracts and composition</h3><p>Pin the sources, adopt Tauten, establish shared identities and deliver one literal migration over immutable input.</p></article><article><span class="mono">M2 / M3</span><h3>Interface and reuse</h3><p>Retain captures across calls. Measure the interface early. Add conservative dependency-aware revalidation.</p></article><article><span class="mono">M4 / M5</span><h3>Evidence and publication</h3><p>Publish controlled evaluation results. Add a live-application host only with an explicit concurrency contract.</p></article></div></section>
-    <section class="section" id="evaluation" aria-labelledby="evaluation-heading"><span class="eyebrow">Evaluation / proposed approach</span><h2 id="evaluation-heading">A fair test against<br>the tools agents already use.</h2><p class="lead">Compare native tools, a unified facade, shared captures and incremental reuse. Give every arm scripting and batching. Grade task outcomes independently.</p><div class="split"><p class="subtle">Measure complete task cost, model roundtrips, unintended changes, missed edits and false refusals. Separate cold setup from warm reuse. Keep failures in the denominators.</p><p class="subtle">Ordinary lookups and simple patches are controls. A ceiling result is published as a ceiling result. Fewer output bytes alone do not establish a better workflow.</p></div></section>
-  </main>
-  <footer><span>plyrune / design concept · 23 November 2026</span><span>Proposed product. No installation or performance claim.</span></footer>
-</div>
+      <ol class="steps" role="list">
+        <li class="step">
+          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">1</span>
+          <span class="step__name">Query</span>
+          <p class="step__what">Every exact match, in a scope you declare.</p>
+          <p class="step__out"><b>selection</b> · complete for that scope</p>
+        </li>
+        <li class="step">
+          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">2</span>
+          <span class="step__name">Inspect <span class="opt">optional</span></span>
+          <p class="step__what">A bounded view of a few captures.</p>
+          <p class="step__out"><b>view</b> · the selection stays whole</p>
+        </li>
+        <li class="step">
+          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">3</span>
+          <span class="step__name">Prepare</span>
+          <p class="step__what">An exact candidate, built from the captured bytes.</p>
+          <p class="step__out"><b>candidate</b> · not applied</p>
+        </li>
+        <li class="step">
+          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">4</span>
+          <span class="step__name">Check</span>
+          <p class="step__what">Coverage of a requirement that was admitted independently of the matches.</p>
+          <p class="step__out"><b>report</b> · bound to that candidate</p>
+        </li>
+      </ol>
+      <p class="boundary"><b>Candidate only.</b> None of these four steps writes to your working tree.</p>
+      <div class="step step--ghost">
+        <span class="step__n" aria-hidden="true">–</span>
+        <span class="step__name">Apply to a working tree</span>
+        <p class="step__what">Not part of milestones M1–M4. A separate host protocol, optional and later.</p>
+      </div>
+      <p class="flow__note" id="flow-note">Names such as <span class="mono">selection</span> and <span class="mono">report</span> are proposed artifact types. No such operation exists yet.</p>
+    </div>
+  </section>
+
+  <div class="strap"><p class="wrap">Shared captures. Explicit scope. Reusable evidence.</p></div>
+
+  <section class="section" id="interface" aria-labelledby="interface-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">One interface · retained identity</p>
+        <h2 id="interface-title">Inspect a little. Keep the whole selection.</h2>
+        <p>A query returns a complete selection for the scope you declared. Inspection is optional and bounded: showing two captures leaves all six available to the proposed edit and to the coverage check. Displaying less never means selecting less.</p>
+      </div>
+
+      <div class="example">
+        <div class="code-col">
+          <div class="code-label"><span>Proposed operations</span><span>Illustrative, not runnable</span></div>
+<pre class="code" role="region" tabindex="0" aria-label="Proposed operations, illustrative pseudocode"><code><span class="a">selection</span> = query(snapshot, requirement)
+<span class="a">view</span>      = inspect(selection, limit=2)
+<span class="a">candidate</span> = prepare(selection, replacement)
+<span class="a">report</span>    = check(requirement, candidate)
+
+<span class="c">// The view does not replace the selection.</span></code></pre>
+          <p class="small">In the proposed design, a harness whose replacement is fully specified could run these steps as one script, with no model turn in between. A judgement that depends on what the model sees would resume later with the retained handles.</p>
+        </div>
+
+        <div class="record" role="group" aria-labelledby="fixture-title">
+          <div class="record__head">
+            <p class="eyebrow" id="fixture-title">Static fixture · 6 required occurrences · 2 displayed</p>
+            <span class="chip chip--planned">Not engine output</span>
+          </div>
+          <dl class="rows record__body">
+            <div class="row">
+              <dt>Task</dt>
+              <dd>Replace every exact <span class="mono">legacy_endpoint</span> with <span class="mono">service_endpoint</span>, in all regular UTF-8 files under <span class="mono">config/</span>.</dd>
+            </div>
+            <div class="row">
+              <dt>Requirement</dt>
+              <dd>Admitted before any match is chosen. Comments and strings count, because the predicate is textual. No other edit is permitted.
+                <p class="small">If the intent were a semantic rename, this requirement would be insufficient and would have to change explicitly.</p>
+              </dd>
+            </div>
+            <div class="row">
+              <dt>Inventory</dt>
+              <dd><span class="num">4</span> files are in scope. One of them, <span class="mono">config/unchanged.env</span>, has no match and still counts toward completeness.</dd>
+            </div>
+            <div class="row">
+              <dt>View</dt>
+              <dd>
+                <div class="caps" aria-hidden="true"><i>1</i><i>2</i><i class="hid">3</i><i class="hid">4</i><i class="hid">5</i><i class="hid">6</i></div>
+                <p class="small">With <span class="mono">limit=2</span> the view displays captures 1–2 (solid). Captures 3–6 (dashed) are not displayed but remain in the selection.</p>
+              </dd>
+            </div>
+            <div class="row">
+              <dt>Captures</dt>
+              <dd>
+                <ol class="caps-list" role="list">
+                  <li class="cap"><span class="cap__n">1</span><span class="cap__path">config/server/api.env</span><span class="cap__line">API_URL=<span class="hit">legacy_endpoint</span></span></li>
+                  <li class="cap"><span class="cap__n">2</span><span class="cap__path">config/server/api.env</span><span class="cap__line">FALLBACK=<span class="hit">legacy_endpoint</span></span></li>
+                </ol>
+                <details class="more">
+                  <summary>Show the 4 captures that are not displayed</summary>
+                  <ol class="caps-list more__list" role="list">
+                    <li class="cap"><span class="cap__n">3</span><span class="cap__path">config/client/app.env</span><span class="cap__line">PRIMARY=<span class="hit">legacy_endpoint</span></span></li>
+                    <li class="cap"><span class="cap__n">4</span><span class="cap__path">config/client/app.env</span><span class="cap__line">SECONDARY=<span class="hit">legacy_endpoint</span></span></li>
+                    <li class="cap"><span class="cap__n">5</span><span class="cap__path">config/jobs/worker.env</span><span class="cap__line">UPSTREAM=<span class="hit">legacy_endpoint</span></span></li>
+                    <li class="cap"><span class="cap__n">6</span><span class="cap__path">config/jobs/worker.env</span><span class="cap__line">BACKUP=<span class="hit">legacy_endpoint</span></span></li>
+                  </ol>
+                </details>
+              </dd>
+            </div>
+            <div class="row">
+              <dt>Expected candidate</dt>
+              <dd><span class="num">6</span> replacements across <span class="num">3</span> files. The other <span class="num">2</span> files in the fixture stay untouched, including <span class="mono">docs/notes.txt</span>, which mentions <span class="mono">legacy_endpoint</span> but lies outside <span class="mono">config/</span>.</dd>
+            </div>
+            <div class="row">
+              <dt>Expected check</dt>
+              <dd>Coverage of all <span class="num">6</span> required occurrences, no extra edit, and a report that names this requirement and this exact candidate.
+                <p class="small">A selection narrowed to <span class="mono">config/server/</span> would not satisfy the requirement, even if every match it returned were replaced.</p>
+              </dd>
+            </div>
+          </dl>
+          <p class="record__foot">This is a static example, not a running Plyrune engine. The counts come from the design fixture; no tool produced them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="assurance" aria-labelledby="assurance-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">Assurance · three things, kept separate</p>
+        <h2 id="assurance-title">Available, claimed and measured are not the same thing.</h2>
+        <p>It is easy to blur what exists, what would be checked and what has been measured. This site keeps them apart and does not fold them into a single score or badge.</p>
+      </div>
+
+      <div class="triad">
+        <article aria-labelledby="avail-title">
+          <span class="chip chip--none">Nothing available</span>
+          <h3 id="avail-title">Available today</h3>
+          <p>No Plyrune binary, package or API exists as of 23 November 2026. When one does, this list will name each shipped operation and the revision it first appeared in.</p>
+          <ul class="ops" role="list">
+            <li><span>query</span><span>not available</span></li>
+            <li><span>inspect</span><span>not available</span></li>
+            <li><span>prepare</span><span>not available</span></li>
+            <li><span>check</span><span>not available</span></li>
+          </ul>
+        </article>
+        <article aria-labelledby="claims-title">
+          <span class="chip chip--planned">Planned</span>
+          <h3 id="claims-title">Assurance claims</h3>
+          <p>Eight properties are planned to be established over the shipped Rust code. None has been proved for the new composition. Each claim is stated with the negative control that should break it.</p>
+          <a class="textlink" href="#claims">See the eight planned claims</a>
+        </article>
+        <article aria-labelledby="outcomes-title">
+          <span class="chip chip--unmeasured">Not measured</span>
+          <h3 id="outcomes-title">Measured outcomes</h3>
+          <p>No trial has been run, so there is no number for task success, time, cost or false refusals. When results exist they will be published with their failures and their uncertainty.</p>
+          <a class="textlink" href="#measurements">Not measured yet: what will be counted</a>
+        </article>
+      </div>
+
+      <div class="claim-block" id="claims">
+        <h3>The first composition claim, as it is proposed to be stated</h3>
+        <blockquote class="composition">
+          <p>Given the identified immutable inputs and validated operations, the candidate uses the selected source bytes, preserves untouched bytes, and the coverage report refers to that exact candidate and independently admitted requirement.</p>
+          <p class="composition__status">Status: planned. It has not been proved for Plyrune. Any future claim will name the exact functions, revision, translation and assumptions it depends on.</p>
+        </blockquote>
+        <ol class="claims" role="list" aria-label="Planned claims and the negative control that should break each one">
+          <li class="claim">
+            <span class="claim__id">PR-C01</span>
+            <p class="claim__text">Admitted capture resolves the named resource and snapshot range with exact bytes.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> omit the owner or snapshot comparison.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C02</span>
+            <p class="claim__text">Complete literal selection equals every supported match and carries a complete declared-inventory witness.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> skip a matching resource; separately omit a required no-match inventory witness.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C03</span>
+            <p class="claim__text">Lowering retains target and source identity and range.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> swap equal-looking captures across owners.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C04</span>
+            <p class="claim__text">Candidate changes exactly the admitted targets, preserving untouched bytes.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> drop an untouched gap or file.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C05</span>
+            <p class="claim__text">Accepted coverage answers the independently admitted requirement.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> bind the requirement to only the returned matches.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C06</span>
+            <p class="claim__text">Report refers to the exact candidate, requirement, premises and checker profile.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> substitute a different candidate or requirement.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C07</span>
+            <p class="claim__text">Each supported operator preserves sufficient dependencies.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> drop the right operand of a difference, or a no-match resource dependency.</p>
+          </li>
+          <li class="claim">
+            <span class="claim__id">PR-C08</span>
+            <p class="claim__text">Composition preserves PR-C01 to PR-C07 under named premises.</p>
+            <p class="claim__ctrl"><b>Planned negative control:</b> break an interface binding.</p>
+          </li>
+        </ol>
+      </div>
+
+      <div class="inherited">
+        <h3>Inherited evidence keeps its own scope</h3>
+        <p>The Splicery and Weft kernels carry proofs that their own projects report at pinned revisions. Those results were not rerun for Plyrune, they do not cover the new composition, and their mappings from domain to kernel are tested rather than proved.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="measurements" aria-labelledby="measurements-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">Measurements · task outcomes</p>
+        <h2 id="measurements-title">Not measured yet.</h2>
+        <p>No Plyrune performance has been measured and no trial has been run. Every result below is empty on purpose. An empty result means “not measured”, never zero.</p>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <caption>What will be reported, and its state on 23 November 2026</caption>
+          <thead>
+            <tr><th scope="col">Measure</th><th scope="col">Result</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Task success<span class="th-note">Independent grading; every trial counted</span></th><td class="result">— not measured</td></tr>
+            <tr><th scope="row">Time to correct result<span class="th-note">End to end, including retries and setup; timeouts kept</span></th><td class="result">— not measured</td></tr>
+            <tr><th scope="row">Model usage and cost<span class="th-note">Input, cache and output tokens; billed cost where available</span></th><td class="result">— not measured</td></tr>
+            <tr><th scope="row">Unintended or missed changes<span class="th-note">Compared with independently authored expected results</span></th><td class="result">— not measured</td></tr>
+            <tr><th scope="row">False refusals<span class="th-note">Valid operations refused, including the cost of recovery</span></th><td class="result">— not measured</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="measure-note">
+        <p>When results exist, this section will be generated from versioned trial records: source revision, model, harness and corpus versions, complete denominators, failures, uncertainty and the raw data. A negative result will be published as a negative result, and a result at ceiling as a ceiling result.</p>
+        <p>The machine-readable state of this section is published next to the page.</p>
+        <a class="textlink" href="measurements.json">measurements.json</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="roadmap" aria-labelledby="roadmap-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">Roadmap · status on 23 November 2026</p>
+        <h2 id="roadmap-title">Prove the small path. Then earn the larger one.</h2>
+        <p>These are scope and acceptance boundaries, not calendar promises. Each step has to show its evidence before the next one is trusted.</p>
+      </div>
+      <ol class="milestones" role="list">
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M0</span><span class="chip chip--wip">In progress</span></div>
+          <h3>Contracts and baseline</h3>
+          <p>Pinned sources, the engineering profile, shared contracts and reference tasks run with ordinary native tools. Started; no exit evidence yet.</p>
+        </li>
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M1</span><span class="chip chip--none">Not started</span></div>
+          <h3>Pure composition</h3>
+          <p>Immutable input, a literal selection, an exact candidate and a coverage report, with no workspace writes.</p>
+        </li>
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M2</span><span class="chip chip--none">Not started</span></div>
+          <h3>Agent interface</h3>
+          <p>One command-line and stdio surface with retained handles and bounded inspection, plus an early cost comparison.</p>
+        </li>
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M3</span><span class="chip chip--none">Not started</span></div>
+          <h3>Revalidation</h3>
+          <p>Sound, conservative reuse and an immutable refresh. Clever incrementality waits until traces show it is worth having.</p>
+        </li>
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M4</span><span class="chip chip--none">Not started</span></div>
+          <h3>Controlled evaluation</h3>
+          <p>A reproducible paired study with independent grading, complete records and negative results.</p>
+        </li>
+        <li class="milestone">
+          <div class="milestone__top"><span class="milestone__id">M5</span><span class="chip chip--optional">Optional</span></div>
+          <h3>Live application</h3>
+          <p>One qualified adapter for applying a candidate, only if a concrete adopter needs it.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="evaluation" aria-labelledby="evaluation-title">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow">Evaluation · proposed method</p>
+        <h2 id="evaluation-title">A fair test against the tools agents already use.</h2>
+        <p>The question is not whether a kernel is fast or an answer is short. It is whether sharing exact artifacts helps a complete task, compared with competent ordinary tooling.</p>
+      </div>
+      <ol class="arms" role="list">
+        <li><span class="arm">A</span><div><b>Native tools</b><p>The harness’s own read, search and patch commands, plus shell or code-mode scripting and batching. This is the baseline to beat.</p></div></li>
+        <li><span class="arm">B</span><div><b>Unified facade</b><p>The same operations with ordinary text handoffs. Isolates the benefit of a single interface.</p></div></li>
+        <li><span class="arm">C</span><div><b>Shared artifacts</b><p>Retained exact captures, views and candidate and report identities. Isolates the benefit of composing artifacts.</p></div></li>
+        <li><span class="arm">D</span><div><b>Incremental reuse</b><p>Arm C plus admitted dependency-aware reuse, measured after M3.</p></div></li>
+      </ol>
+      <div class="eval-note">
+        <p>Every arm can script and batch. The grader does not call the tool under test. Failures stay in the denominators, cold and warm runs are reported separately, and no arm is weakened to produce a win.</p>
+        <p>An early paired pilot is a go/no-go checkpoint, not a marketing study. If success is at ceiling and the interface costs more, the intended use case narrows or the interface gets simpler.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>Plyrune · planned product · page content as of 23 November 2026</p>
+    <p>No release, no installation and no performance result exist. This page is not a running Plyrune engine. The implementation repository is private for now.</p>
+    <a class="textlink" href="#top">Back to top</a>
+  </div>
+</footer>
+
 <script>
-  const themeButton = document.getElementById('theme');
-  themeButton.addEventListener('click', () => {
-    const dark = document.body.classList.toggle('dark');
-    themeButton.setAttribute('aria-pressed', String(dark));
-    themeButton.textContent = dark ? 'Light theme' : 'Dark theme';
+/* The page is complete without this script. It adds one behaviour: a per-page colour-scheme toggle.
+   The system preference is the default; an explicit choice lasts for this page view only.
+   Nothing is stored, sent or loaded: no storage, no cookies, no network requests. */
+(() => {
+  'use strict';
+  const root = document.documentElement;
+  const button = document.querySelector('[data-theme-toggle]');
+  const label = button && button.querySelector('[data-theme-label]');
+  if (!button || !label || typeof window.matchMedia !== 'function') return;
+
+  const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const override = () => root.getAttribute('data-theme');
+  const isDark = () => (override() ? override() === 'dark' : scheme.matches);
+
+  const sync = () => {
+    const next = isDark() ? 'light' : 'dark';
+    button.dataset.next = next;
+    button.setAttribute('aria-label', `Switch to ${next} theme`);
+    label.textContent = `${next[0].toUpperCase()}${next.slice(1)} theme`;
+  };
+
+  button.addEventListener('click', () => {
+    root.setAttribute('data-theme', isDark() ? 'light' : 'dark');
+    sync();
   });
+
+  if (typeof scheme.addEventListener === 'function') {
+    scheme.addEventListener('change', () => { if (!override()) sync(); });
+  }
+
+  button.hidden = false;
+  sync();
+})();
 </script>
 </body>
 </html>
