@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Changelog · Plyrune</title>
+  <meta name="description" content="Dated notes on what works in Plyrune, what was checked and what is available.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<main class="section">
+  <div class="wrap">
+    <a class="textlink" href="index.html">← Plyrune home</a>
+    <header class="section__head">
+      <p class="eyebrow">Shipping notes</p>
+      <h1>Changelog</h1>
+      <p>What changed, how we checked it, and where you can try it. There is no installable release yet.</p>
+    </header>
+    <article class="section" id="2026-11-24">
+      <p class="eyebrow"><time datetime="2026-11-24">24 November 2026</time> · Development checkpoint</p>
+      <h2>A reproducible reference for the first migration</h2>
+      <p>The six native fixture tasks now record their actual outputs and the identities of their inputs. The build compares each rerun with the saved trace. One case shows why scope matters: replacing both matches under <code>config/server/</code> still misses four required replacements elsewhere. These are correctness checks, not performance measurements.</p>
+      <p><strong>Live on Pages:</strong> the <a href="index.html#assurance">assurance record</a> separates the current developer build from planned operations. The <a href="measurements.json">measurement record</a> has no benchmark trials yet.</p>
+    </article>
+    <article class="section" id="2026-11-23">
+      <p class="eyebrow"><time datetime="2026-11-23">23 November 2026</time> · Private source checkpoint</p>
+      <h2>The first command identifies an immutable fixture</h2>
+      <p><code>plyrune snapshot</code> reads a fixture on stdin. It admits regular UTF-8 resources, preserves line endings, and returns a resource count and content digest. The installed command matched the independent digest for the five-resource example.</p>
+      <p><strong>Assurance:</strong> the Docker gate checked four Lean claims over the translated Rust kernel: store equality, byte-range bounds, UTF-8 boundary detection and text-range admission. Six intentional source changes broke their expected theorems.</p>
+      <p><strong>Editing:</strong> an isolated Splicery probe produced the expected candidate for all five resources. That is not yet an editing command or a proof of migration coverage.</p>
+    </article>
+  </div>
+</main>
+</body>
+</html>
