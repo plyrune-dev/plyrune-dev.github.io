@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plyrune: inspect text from an exact snapshot</title>
-  <meta name="description" content="Install the Plyrune preview for Linux x86-64. Inspect text from an exact snapshot and try a stale-input refusal.">
+  <title>Plyrune: snapshot-bound text inspection for agents and CI</title>
+  <meta name="description" content="Read an exact byte range from a fixture in your agent harness or CI job. Try the Linux CLI and see why the same path and offsets can be stale.">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#F5F2EA" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#111F1B" media="(prefers-color-scheme: dark)">
+  <script src="theme.js"></script>
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Plyrune">
-  <meta property="og:title" content="Plyrune: source to change, without losing the thread">
-  <meta property="og:description" content="Try a proof-backed snapshot inspection in the first installable Plyrune preview.">
+  <meta property="og:title" content="Plyrune: snapshot-bound text inspection for agents and CI">
+  <meta property="og:description" content="Change one file, then try to inspect another using the old digest. Run the two-command demo on Linux x86-64 or WSL2.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
   <link rel="alternate icon" href="brand/favicon.ico" sizes="16x16 32x32 48x48">
@@ -48,10 +47,9 @@
     </a>
     <nav class="site-nav" aria-label="Sections">
       <ul>
-        <li><a href="#interface">Interface</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#interface">Shell example</a></li>
         <li><a href="#assurance">Assurance</a></li>
-        <li><a href="#measurements">Measurements</a></li>
-        <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="changelog.html">Changelog</a></li>
       </ul>
     </nav>
@@ -65,323 +63,84 @@
 
 <main id="main" tabindex="-1">
 
-  <section class="hero wrap" aria-labelledby="hero-title">
+  <section class="hero wrap fixture-home" aria-labelledby="hero-title">
     <div class="hero__copy">
-      <p><span class="chip chip--wip">CLI preview · Linux x86-64 / WSL2</span></p>
-      <h1 id="hero-title">Source to change, without losing the thread.</h1>
-      <p class="lede">Inspect a slice of text from an exact snapshot. Change even an unrelated file in the fixture and the old request is refused. Try it in two commands:</p>
-      <p id="install"><code>curl -fsSL https://plyrune-dev.github.io/install.sh | sh</code><br><code>"$HOME/.local/bin/plyrune" demo</code></p>
-      <p>The <a href="install.sh">installer</a> checks the pinned binary and places it in your user bin directory. No sudo, Rust or Docker required. <a href="https://github.com/plyrune-dev/plyrune/releases/tag/v0.0.1-preview.1">Download the preview directly</a>.</p>
-      <div class="actions">
-        <a class="button button--primary" href="#interface">See the interface</a>
-        <a class="button" href="#assurance">What is and is not claimed</a>
-      </div>
+      <p class="eyebrow">Plyrune CLI · <a href="https://github.com/plyrune-dev/plyrune/releases/tag/v0.0.1-preview.1">v0.0.1-preview.1</a></p>
+      <h1 id="hero-title">Read from the snapshot your agent saw.</h1>
+      <p class="lede">For coding-agent and CI authors: a path and two offsets tell the next step where to read, but not which input you reviewed. Plyrune’s CLI checks the saved fixture digest before returning the text.</p>
+      <p>The demo reads <code>legacy_endpoint</code> from bytes 8–23 (end excluded) of <code>config/server/api.env</code>. Then it changes only <code>docs/notes.txt</code> in memory. Same path, same bytes, same request; this time the result is <code>WrongSnapshot</code>.</p>
     </div>
 
-    <div class="flow" role="group" aria-labelledby="flow-title" aria-describedby="flow-note">
-      <div class="flow__head">
-        <p class="eyebrow" id="flow-title">The proposed flow</p>
-        <p class="eyebrow">Design vocabulary, not an API</p>
-      </div>
-      <ol class="steps" role="list">
-        <li class="step">
-          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">1</span>
-          <span class="step__name">Query</span>
-          <p class="step__what">Every exact match, in a scope you declare.</p>
-          <p class="step__out"><b>selection</b> · complete for that scope</p>
-        </li>
-        <li class="step">
-          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">2</span>
-          <span class="step__name">Inspect <span class="opt">optional</span></span>
-          <p class="step__what">A bounded view of a few captures.</p>
-          <p class="step__out"><b>view</b> · the selection stays whole</p>
-        </li>
-        <li class="step">
-          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">3</span>
-          <span class="step__name">Prepare</span>
-          <p class="step__what">An exact candidate, built from the captured bytes.</p>
-          <p class="step__out"><b>candidate</b> · not applied</p>
-        </li>
-        <li class="step">
-          <span class="step__line" aria-hidden="true"></span><span class="step__n" aria-hidden="true">4</span>
-          <span class="step__name">Check</span>
-          <p class="step__what">Coverage of a requirement that was admitted independently of the matches.</p>
-          <p class="step__out"><b>report</b> · bound to that candidate</p>
-        </li>
-      </ol>
-      <p class="boundary"><b>Candidate only.</b> None of these four steps writes to your working tree.</p>
-      <div class="step step--ghost">
-        <span class="step__n" aria-hidden="true">–</span>
-        <span class="step__name">Apply to a working tree</span>
-        <p class="step__what">Not part of milestones M1–M4. A separate host protocol, optional and later.</p>
-      </div>
-      <p class="flow__note" id="flow-note">Names such as <span class="mono">selection</span> and <span class="mono">report</span> are proposed artifact types. No such operation exists yet.</p>
-    </div>
+    <section class="fixture-home__install" id="install" aria-labelledby="install-title">
+      <p class="eyebrow">Linux x86-64 · including WSL2</p>
+      <h2 id="install-title">Try the demo</h2>
+      <pre class="code" role="region" aria-label="Install the preview and run its demo" tabindex="0"><code>curl -fsSL https://plyrune-dev.github.io/install.sh | sh
+"$HOME/.local/bin/plyrune" demo</code></pre>
+      <p>Both outcomes print as JSON. The demo exits successfully after showing the refusal.</p>
+      <p class="small">The <a href="install.sh">installer script</a> checks the SHA-256 of the <a href="https://github.com/plyrune-dev/plyrune/releases/download/v0.0.1-preview.1/plyrune-linux-x86_64">pinned preview binary</a> and installs it in <code>~/.local/bin</code> by default. No sudo, Rust or Docker needed. Remove the binary to uninstall.</p>
+    </section>
   </section>
 
-  <div class="strap"><p class="wrap">Shared captures. Explicit scope. Reusable evidence.</p></div>
-
-  <section class="section" id="interface" aria-labelledby="interface-title">
+  <section class="section fixture-home fixture-home--section" id="interface" aria-labelledby="interface-title">
     <div class="wrap">
       <div class="section__head">
-        <p class="eyebrow">One interface · retained identity</p>
-        <h2 id="interface-title">Inspect a little. Keep the whole selection.</h2>
-        <p>A query returns a complete selection for the scope you declared. Inspection is optional and bounded: showing two captures leaves all six available to the proposed edit and to the coverage check. Displaying less never means selecting less.</p>
+        <p class="eyebrow">Shell / CI</p>
+        <h2 id="interface-title">Pass the digest between steps</h2>
+        <p>Use <code>snapshot</code> when your harness accepts the fixture, then pass that saved digest to <code>inspect</code>. Both read the fixture manifest on stdin, not the working tree. Try this in an empty directory with <code>jq</code> installed.</p>
       </div>
-
-      <div class="example">
-        <div class="code-col">
-          <div class="code-label"><span>Proposed operations</span><span>Illustrative, not runnable</span></div>
-<pre class="code" role="region" tabindex="0" aria-label="Proposed operations, illustrative pseudocode"><code><span class="a">selection</span> = query(snapshot, requirement)
-<span class="a">view</span>      = inspect(selection, limit=2)
-<span class="a">candidate</span> = prepare(selection, replacement)
-<span class="a">report</span>    = check(requirement, candidate)
-
-<span class="c">// The view does not replace the selection.</span></code></pre>
-          <p class="small">In the proposed design, a harness whose replacement is fully specified could run these steps as one script, with no model turn in between. A judgement that depends on what the model sees would resume later with the retained handles.</p>
+      <div class="fixture-home__pair">
+        <div class="fixture-home__step">
+          <h3>1. Inspect the original fixture</h3>
+          <pre class="code" role="region" aria-label="Capture the fixture digest and inspect the original text" tabindex="0"><code>p="$HOME/.local/bin/plyrune"
+"$p" example &gt; fixture.json
+key=$("$p" snapshot &lt; fixture.json | jq -er .sha256)
+view() {
+  "$p" inspect "$key" config/server/api.env 8 23
+}
+view &lt; fixture.json</code></pre>
+          <p>Exit 0. The JSON field <code>text</code> contains <code>legacy_endpoint</code>. Offsets count UTF-8 bytes from zero; the end is exclusive.</p>
         </div>
-
-        <div class="record" role="group" aria-labelledby="fixture-title">
-          <div class="record__head">
-            <p class="eyebrow" id="fixture-title">Static fixture · 6 required occurrences · 2 displayed</p>
-            <span class="chip chip--planned">Not engine output</span>
-          </div>
-          <dl class="rows record__body">
-            <div class="row">
-              <dt>Task</dt>
-              <dd>Replace every exact <span class="mono">legacy_endpoint</span> with <span class="mono">service_endpoint</span>, in all regular UTF-8 files under <span class="mono">config/</span>.</dd>
-            </div>
-            <div class="row">
-              <dt>Requirement</dt>
-              <dd>Admitted before any match is chosen. Comments and strings count, because the predicate is textual. No other edit is permitted.
-                <p class="small">If the intent were a semantic rename, this requirement would be insufficient and would have to change explicitly.</p>
-              </dd>
-            </div>
-            <div class="row">
-              <dt>Inventory</dt>
-              <dd><span class="num">4</span> files are in scope. One of them, <span class="mono">config/unchanged.env</span>, has no match and still counts toward completeness.</dd>
-            </div>
-            <div class="row">
-              <dt>View</dt>
-              <dd>
-                <div class="caps" aria-hidden="true"><i>1</i><i>2</i><i class="hid">3</i><i class="hid">4</i><i class="hid">5</i><i class="hid">6</i></div>
-                <p class="small">With <span class="mono">limit=2</span> the view displays captures 1–2 (solid). Captures 3–6 (dashed) are not displayed but remain in the selection.</p>
-              </dd>
-            </div>
-            <div class="row">
-              <dt>Captures</dt>
-              <dd>
-                <ol class="caps-list" role="list">
-                  <li class="cap"><span class="cap__n">1</span><span class="cap__path">config/server/api.env</span><span class="cap__line">API_URL=<span class="hit">legacy_endpoint</span></span></li>
-                  <li class="cap"><span class="cap__n">2</span><span class="cap__path">config/server/api.env</span><span class="cap__line">FALLBACK=<span class="hit">legacy_endpoint</span></span></li>
-                </ol>
-                <details class="more">
-                  <summary>Show the 4 captures that are not displayed</summary>
-                  <ol class="caps-list more__list" role="list">
-                    <li class="cap"><span class="cap__n">3</span><span class="cap__path">config/client/app.env</span><span class="cap__line">PRIMARY=<span class="hit">legacy_endpoint</span></span></li>
-                    <li class="cap"><span class="cap__n">4</span><span class="cap__path">config/client/app.env</span><span class="cap__line">SECONDARY=<span class="hit">legacy_endpoint</span></span></li>
-                    <li class="cap"><span class="cap__n">5</span><span class="cap__path">config/jobs/worker.env</span><span class="cap__line">UPSTREAM=<span class="hit">legacy_endpoint</span></span></li>
-                    <li class="cap"><span class="cap__n">6</span><span class="cap__path">config/jobs/worker.env</span><span class="cap__line">BACKUP=<span class="hit">legacy_endpoint</span></span></li>
-                  </ol>
-                </details>
-              </dd>
-            </div>
-            <div class="row">
-              <dt>Expected candidate</dt>
-              <dd><span class="num">6</span> replacements across <span class="num">3</span> files. The other <span class="num">2</span> files in the fixture stay untouched, including <span class="mono">docs/notes.txt</span>, which mentions <span class="mono">legacy_endpoint</span> but lies outside <span class="mono">config/</span>.</dd>
-            </div>
-            <div class="row">
-              <dt>Expected check</dt>
-              <dd>Coverage of all <span class="num">6</span> required occurrences, no extra edit, and a report that names this requirement and this exact candidate.
-                <p class="small">A selection narrowed to <span class="mono">config/server/</span> would not satisfy the requirement, even if every match it returned were replaced.</p>
-              </dd>
-            </div>
-          </dl>
-          <p class="record__foot">This is a static example, not a running Plyrune engine. The counts come from the design fixture; no tool produced them.</p>
+        <div class="fixture-home__step">
+          <h3>2. Repeat after a different file changes</h3>
+          <pre class="code" role="region" aria-label="Change the notes in the input stream and repeat the inspection" tabindex="0"><code>jq '(.resources[] |
+  select(.path == "docs/notes.txt") |
+  .text) += "!"' fixture.json | view</code></pre>
+          <p>Exit 2. <code>inspect</code> writes <code>WrongSnapshot</code> to stderr and no view to stdout. Don’t treat that as empty text or silently substitute a new digest: decide whether to restart the step on the changed input.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="assurance" aria-labelledby="assurance-title">
+  <section class="section fixture-home fixture-home--section" id="assurance" aria-labelledby="assurance-title">
     <div class="wrap">
       <div class="section__head">
-        <p class="eyebrow">Assurance · three things, kept separate</p>
-        <h2 id="assurance-title">Available, claimed and measured are not the same thing.</h2>
-        <p>It is easy to blur what exists, what would be checked and what has been measured. This site keeps them apart and does not fold them into a single score or badge.</p>
+        <p class="eyebrow">Evidence / scope</p>
+        <h2 id="assurance-title">What the refusal tells you</h2>
       </div>
-
       <div class="triad">
-        <article aria-labelledby="avail-title">
-          <span class="chip chip--wip">Developer build</span>
-          <h3 id="avail-title">Available today</h3>
-          <p><a href="#install">Install the preview</a> to identify an immutable fixture with <code>snapshot</code> and extract text by snapshot, exact path and byte offsets with <code>inspect</code>.</p>
-          <ul class="ops" role="list">
-            <li><span>query</span><span>not available</span></li>
-            <li><span>inspect</span><span>fixture byte range</span></li>
-            <li><span>prepare</span><span>not available</span></li>
-            <li><span>check</span><span>not available</span></li>
-          </ul>
+        <article aria-labelledby="guard-title">
+          <h3 id="guard-title">Proved for the release</h3>
+          <p>The <a href="https://github.com/plyrune-dev/plyrune/blob/v0.0.1-preview.1/proofs/claims.json">preview’s Lean proof record</a> covers the translated Rust guard: different snapshot keys are refused; equal keys use the byte-range and UTF-8 checks. Ignoring either half of the key broke that theorem.</p>
         </article>
-        <article aria-labelledby="claims-title">
-          <span class="chip chip--planned">Planned</span>
-          <h3 id="claims-title">Assurance claims</h3>
-          <p>Eight obligations guide the design. The <a href="https://github.com/plyrune-dev/plyrune/blob/main/docs/ASSURANCE.md">assurance plan</a> distinguishes proofs over Rust decisions from tested mappings and host assumptions. No end-to-end coverage theorem has been established.</p>
-          <a class="textlink" href="#claims">See the eight planned claims</a>
+        <article aria-labelledby="bridge-title">
+          <h3 id="bridge-title">Tested, not proved</h3>
+          <p>Digest encoding, path lookup and CLI behavior are tested separately. The <a href="https://github.com/plyrune-dev/plyrune/issues/42">installed-binary checks</a> cover stale requests, invalid ranges and the display limit. A digest identifies input; it does not grant permission to read it.</p>
         </article>
-        <article aria-labelledby="outcomes-title">
-          <span class="chip chip--unmeasured">Not measured</span>
-          <h3 id="outcomes-title">Measured outcomes</h3>
-          <p>No trial has been run, so there is no number for task success, time, cost or false refusals. When results exist they will be published with their failures and their uncertainty.</p>
-          <a class="textlink" href="#measurements">Not measured yet: what will be counted</a>
+        <article aria-labelledby="limits-title">
+          <h3 id="limits-title">Outside the preview</h3>
+          <p>No workspace search, editing or migration check. There are <a href="measurements.json">no measured agent-task outcomes</a> for speed, cost or success.</p>
         </article>
-      </div>
-
-      <div class="claim-block" id="claims">
-        <h3>The first composition claim, as it is proposed to be stated</h3>
-        <blockquote class="composition">
-          <p>Given the identified immutable inputs and validated operations, the candidate uses the selected source bytes, preserves untouched bytes, and the coverage report refers to that exact candidate and independently admitted requirement.</p>
-          <p class="composition__status">Status: planned. It has not been proved for Plyrune. Any future claim will name the exact functions, revision, translation and assumptions it depends on.</p>
-        </blockquote>
-        <ol class="claims" role="list" aria-label="Planned claims and the negative control that should break each one">
-          <li class="claim">
-            <span class="claim__id">PR-C01</span>
-            <p class="claim__text">Admitted capture resolves the named resource and snapshot range with exact bytes.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> omit the owner or snapshot comparison.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C02</span>
-            <p class="claim__text">Complete literal selection equals every supported match and carries a complete declared-inventory witness.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> skip a matching resource; separately omit a required no-match inventory witness.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C03</span>
-            <p class="claim__text">Lowering retains target and source identity and range.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> swap equal-looking captures across owners.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C04</span>
-            <p class="claim__text">Candidate changes exactly the admitted targets, preserving untouched bytes.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> drop an untouched gap or file.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C05</span>
-            <p class="claim__text">Accepted coverage answers the independently admitted requirement.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> bind the requirement to only the returned matches.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C06</span>
-            <p class="claim__text">Report refers to the exact candidate, requirement, premises and checker profile.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> substitute a different candidate or requirement.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C07</span>
-            <p class="claim__text">Each supported operator preserves sufficient dependencies.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> drop the right operand of a difference, or a no-match resource dependency.</p>
-          </li>
-          <li class="claim">
-            <span class="claim__id">PR-C08</span>
-            <p class="claim__text">Composition preserves PR-C01 to PR-C07 under named premises.</p>
-            <p class="claim__ctrl"><b>Planned negative control:</b> break an interface binding.</p>
-          </li>
-        </ol>
-      </div>
-
-      <div class="inherited">
-        <h3>Inherited evidence keeps its own scope</h3>
-        <p>Plyrune reran Splicery’s native proof gate on its pinned source. Weft’s proofs remain upstream results. Neither establishes that Plyrune lowers a selection to the right edits or checks the resulting candidate against the original requirement.</p>
       </div>
     </div>
   </section>
 
-  <section class="section" id="measurements" aria-labelledby="measurements-title">
+  <section class="section fixture-home fixture-home--section" aria-labelledby="next-title">
     <div class="wrap">
       <div class="section__head">
-        <p class="eyebrow">Measurements · task outcomes</p>
-        <h2 id="measurements-title">Not measured yet.</h2>
-        <p>No Plyrune performance has been measured and no trial has been run. Every result below is empty on purpose. An empty result means “not measured”, never zero.</p>
-      </div>
-      <div class="table-wrap">
-        <table class="table">
-          <caption>What will be reported, and its state on 23 November 2026</caption>
-          <thead>
-            <tr><th scope="col">Measure</th><th scope="col">Result</th></tr>
-          </thead>
-          <tbody>
-            <tr><th scope="row">Task success<span class="th-note">Independent grading; every trial counted</span></th><td class="result">— not measured</td></tr>
-            <tr><th scope="row">Time to correct result<span class="th-note">End to end, including retries and setup; timeouts kept</span></th><td class="result">— not measured</td></tr>
-            <tr><th scope="row">Model usage and cost<span class="th-note">Input, cache and output tokens; billed cost where available</span></th><td class="result">— not measured</td></tr>
-            <tr><th scope="row">Unintended or missed changes<span class="th-note">Compared with independently authored expected results</span></th><td class="result">— not measured</td></tr>
-            <tr><th scope="row">False refusals<span class="th-note">Valid operations refused, including the cost of recovery</span></th><td class="result">— not measured</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="measure-note">
-        <p>When results exist, this section will be generated from versioned trial records: source revision, model, harness and corpus versions, complete denominators, failures, uncertainty and the raw data. A negative result will be published as a negative result, and a result at ceiling as a ceiling result.</p>
-        <p>The machine-readable state of this section is published next to the page.</p>
-        <a class="textlink" href="measurements.json">measurements.json</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="roadmap" aria-labelledby="roadmap-title">
-    <div class="wrap">
-      <div class="section__head">
-        <p class="eyebrow">Roadmap · status on 24 November 2026</p>
-        <h2 id="roadmap-title">Prove the small path. Then earn the larger one.</h2>
-        <p>These are scope and acceptance boundaries, not calendar promises. Each step has to show its evidence before the next one is trusted.</p>
-      </div>
-      <ol class="milestones" role="list">
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M0</span><span class="chip chip--wip">In progress</span></div>
-          <h3>Contracts and baseline</h3>
-          <p>Six native reference tasks now have reproducible traces. The source inventory and requirement framing are still open.</p>
-        </li>
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M1</span><span class="chip chip--none">Not started</span></div>
-          <h3>Pure composition</h3>
-          <p>Immutable input, a literal selection, an exact candidate and a coverage report, with no workspace writes.</p>
-        </li>
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M2</span><span class="chip chip--none">Not started</span></div>
-          <h3>Agent interface</h3>
-          <p>One command-line and stdio surface with retained handles and bounded inspection, plus an early cost comparison.</p>
-        </li>
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M3</span><span class="chip chip--none">Not started</span></div>
-          <h3>Revalidation</h3>
-          <p>Sound, conservative reuse and an immutable refresh. Clever incrementality waits until traces show it is worth having.</p>
-        </li>
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M4</span><span class="chip chip--none">Not started</span></div>
-          <h3>Controlled evaluation</h3>
-          <p>A reproducible paired study with independent grading, complete records and negative results.</p>
-        </li>
-        <li class="milestone">
-          <div class="milestone__top"><span class="milestone__id">M5</span><span class="chip chip--optional">Optional</span></div>
-          <h3>Live application</h3>
-          <p>One qualified adapter for applying a candidate, only if a concrete adopter needs it.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section" id="evaluation" aria-labelledby="evaluation-title">
-    <div class="wrap">
-      <div class="section__head">
-        <p class="eyebrow">Evaluation · proposed method</p>
-        <h2 id="evaluation-title">A fair test against the tools agents already use.</h2>
-        <p>The question is not whether a kernel is fast or an answer is short. It is whether sharing exact artifacts helps a complete task, compared with competent ordinary tooling.</p>
-      </div>
-      <ol class="arms" role="list">
-        <li><span class="arm">A</span><div><b>Native tools</b><p>The harness’s own read, search and patch commands, plus shell or code-mode scripting and batching. This is the baseline to beat.</p></div></li>
-        <li><span class="arm">B</span><div><b>Unified facade</b><p>The same operations with ordinary text handoffs. Isolates the benefit of a single interface.</p></div></li>
-        <li><span class="arm">C</span><div><b>Shared artifacts</b><p>Retained exact captures, views and candidate and report identities. Isolates the benefit of composing artifacts.</p></div></li>
-        <li><span class="arm">D</span><div><b>Incremental reuse</b><p>Arm C plus admitted dependency-aware reuse, measured after M3.</p></div></li>
-      </ol>
-      <div class="eval-note">
-        <p>Every arm can script and batch. The grader does not call the tool under test. Failures stay in the denominators, cold and warm runs are reported separately, and no arm is weakened to produce a win.</p>
-        <p>An early paired pilot is a go/no-go checkpoint, not a marketing study. If success is at ceiling and the interface costs more, the intended use case narrows or the interface gets simpler.</p>
+        <p class="eyebrow">Source development · 25 November 2026</p>
+        <h2 id="next-title">Keep the file identity, not just the text</h2>
+        <p>Two config files can both say <code>legacy_endpoint</code>. The <a href="https://github.com/plyrune-dev/plyrune/issues/4">Rust library</a> lets a harness keep a capture from one file and refuses to resolve it against the other. It binds the store, snapshot, resource and byte range. This is available from source, not in the installed CLI.</p>
+        <p>The next question is about coverage: did a migration replace every required occurrence under <code>config/</code>, or only the ones the agent inspected? That needs a <a href="https://github.com/plyrune-dev/plyrune/issues/5">complete inventory</a>, including files with no matches. Neither the release nor a single capture answers it.</p>
       </div>
     </div>
   </section>
@@ -390,47 +149,11 @@
 
 <footer class="site-foot">
   <div class="wrap">
-    <p>Plyrune · in development · <a href="changelog.html">Shipping notes</a></p>
-    <p>Build from <a href="https://github.com/plyrune-dev/plyrune">source on GitHub</a> or <a href="#install">try the CLI preview</a>. No measured performance result yet.</p>
-    <p>The page sets no cookies and loads nothing from other origins. Its host, GitHub Pages, logs visitor IP addresses for security.</p>
+    <p>Plyrune · <a href="https://github.com/plyrune-dev/plyrune">MIT-licensed source</a> · <a href="changelog.html">Changelog</a></p>
+    <p>Your theme choice stays in this browser. The site sets no cookies and loads no third-party assets. GitHub Pages logs visitor IP addresses for security.</p>
     <a class="textlink" href="#top">Back to top</a>
   </div>
 </footer>
 
-<script>
-/* The page is complete without this script. It adds one behaviour: a per-page colour-scheme toggle.
-   The system preference is the default; an explicit choice lasts for this page view only.
-   Nothing is stored, sent or loaded: no storage, no cookies, no network requests. */
-(() => {
-  'use strict';
-  const root = document.documentElement;
-  const button = document.querySelector('[data-theme-toggle]');
-  const label = button && button.querySelector('[data-theme-label]');
-  if (!button || !label || typeof window.matchMedia !== 'function') return;
-
-  const scheme = window.matchMedia('(prefers-color-scheme: dark)');
-  const override = () => root.getAttribute('data-theme');
-  const isDark = () => (override() ? override() === 'dark' : scheme.matches);
-
-  const sync = () => {
-    const next = isDark() ? 'light' : 'dark';
-    button.dataset.next = next;
-    button.setAttribute('aria-label', `Switch to ${next} theme`);
-    label.textContent = `${next[0].toUpperCase()}${next.slice(1)} theme`;
-  };
-
-  button.addEventListener('click', () => {
-    root.setAttribute('data-theme', isDark() ? 'light' : 'dark');
-    sync();
-  });
-
-  if (typeof scheme.addEventListener === 'function') {
-    scheme.addEventListener('change', () => { if (!override()) sync(); });
-  }
-
-  button.hidden = false;
-  sync();
-})();
-</script>
 </body>
 </html>
