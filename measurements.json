@@ -9,5 +9,5 @@
     "newComposition": "planned",
     "inheritedKernels": "separately-scoped"
   },
-  "note": "No Plyrune 2.0 performance or composition-proof result has been produced."
+  "note": "Historical design baseline from 2026-11-23, not a current proof inventory. No agent-task benchmark trials are recorded. For qualified kernel claims, see the release's proofs/claims.json."
 }

@@ -8,9 +8,9 @@ main() {
     esac
     dir=${PLYRUNE_INSTALL_DIR:-"$HOME/.local/bin"}
     case "$dir" in /*) ;; *) echo 'PLYRUNE_INSTALL_DIR must be absolute.' >&2; exit 1;; esac
-    version=v0.0.1-preview.1
+    version=v0.0.1-preview.2
     asset=plyrune-linux-x86_64
-    sha=82646d5bc43ec0fb243cd364a63de90686ff5057ab259b65dcb036ad458113b6
+    sha=875e879ce34207f38dae7949be76e72f369eb1bbca18c8245d87ff43e5038d34
     url="https://github.com/plyrune-dev/plyrune/releases/download/$version/$asset"
     printf 'Installing %s from %s to %s/plyrune\n' "$version" "$url" "$dir"
     mkdir -p -- "$dir"

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plyrune: snapshot-bound text inspection for agents and CI</title>
-  <meta name="description" content="Read an exact byte range from a fixture in your agent harness or CI job. Try the Linux CLI and see why the same path and offsets can be stale.">
+  <title>Plyrune CLI: find, review and replace literal text across files</title>
+  <meta name="description" content="Find every literal match in a folder, preview the replacements, then write them in place or to an empty output directory. No Git repository required.">
   <meta name="color-scheme" content="light dark">
   <script src="theme.js"></script>
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Plyrune">
-  <meta property="og:title" content="Plyrune: snapshot-bound text inspection for agents and CI">
-  <meta property="og:description" content="Change one file, then try to inspect another using the old digest. Run the two-command demo on Linux x86-64 or WSL2.">
+  <meta property="og:title" content="Plyrune CLI: find, review and replace literal text across files">
+  <meta property="og:description" content="A local editing CLI for agents and scripts. Review exact paths and byte ranges before choosing where the changed files go.">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
   <link rel="alternate icon" href="brand/favicon.ico" sizes="16x16 32x32 48x48">
@@ -65,19 +65,19 @@
 
   <section class="hero wrap fixture-home" aria-labelledby="hero-title">
     <div class="hero__copy">
-      <p class="eyebrow">Plyrune CLI · <a href="https://github.com/plyrune-dev/plyrune/releases/tag/v0.0.1-preview.1">v0.0.1-preview.1</a></p>
-      <h1 id="hero-title">Read from the snapshot your agent saw.</h1>
-      <p class="lede">For coding-agent and CI authors: a path and two offsets tell the next step where to read, but not which input you reviewed. Plyrune’s CLI checks the saved fixture digest before returning the text.</p>
-      <p>The demo reads <code>legacy_endpoint</code> from bytes 8–23 (end excluded) of <code>config/server/api.env</code>. Then it changes only <code>docs/notes.txt</code> in memory. Same path, same bytes, same request; this time the result is <code>WrongSnapshot</code>.</p>
+      <p class="eyebrow">Plyrune CLI · <a href="https://github.com/plyrune-dev/plyrune/releases/tag/v0.0.1-preview.2">v0.0.1-preview.2</a></p>
+      <h1 id="hero-title">Find the text. Review the change. Choose where it lands.</h1>
+      <p class="lede">Tell Plyrune which folder to search and which text to replace. It shows every match and the files with none. Only a separate <code>apply</code> command writes files.</p>
+      <p>Use it when an agent or script needs to change every <code>old_host</code> under <code>config/</code>, not just the first one it found. Edit the originals or write a copy to another directory. No Git repository, commit or checkout required.</p>
     </div>
 
     <section class="fixture-home__install" id="install" aria-labelledby="install-title">
       <p class="eyebrow">Linux x86-64 · including WSL2</p>
-      <h2 id="install-title">Try the demo</h2>
+      <h2 id="install-title">Install the CLI</h2>
       <pre class="code" role="region" aria-label="Install the preview and run its demo" tabindex="0"><code>curl -fsSL https://plyrune-dev.github.io/install.sh | sh
 "$HOME/.local/bin/plyrune" demo</code></pre>
-      <p>Both outcomes print as JSON. The demo exits successfully after showing the refusal.</p>
-      <p class="small">The <a href="install.sh">installer script</a> checks the SHA-256 of the <a href="https://github.com/plyrune-dev/plyrune/releases/download/v0.0.1-preview.1/plyrune-linux-x86_64">pinned preview binary</a> and installs it in <code>~/.local/bin</code> by default. No sudo, Rust or Docker needed. Remove the binary to uninstall.</p>
+      <p><code>demo</code> is read-only: it shows an exact text lookup, then a stale lookup being refused. Try a real edit below.</p>
+      <p class="small">The <a href="install.sh">installer</a> verifies the SHA-256 of the <a href="https://github.com/plyrune-dev/plyrune/releases/download/v0.0.1-preview.2/plyrune-linux-x86_64">pinned binary</a>. No sudo, Rust or Docker. Remove <code>~/.local/bin/plyrune</code> to uninstall.</p>
     </section>
   </section>
 
@@ -85,27 +85,30 @@
     <div class="wrap">
       <div class="section__head">
         <p class="eyebrow">Shell / CI</p>
-        <h2 id="interface-title">Pass the digest between steps</h2>
-        <p>Use <code>snapshot</code> when your harness accepts the fixture, then pass that saved digest to <code>inspect</code>. Both read the fixture manifest on stdin, not the working tree. Try this in an empty directory with <code>jq</code> installed.</p>
+        <h2 id="interface-title">Change a setting without touching the original</h2>
+        <p>Try this on a local Linux filesystem. The example makes one input file, then writes the reviewed result to a separate empty directory. <code>jq</code> just reads the review ID from JSON; Plyrune itself does not need it.</p>
       </div>
       <div class="fixture-home__pair">
         <div class="fixture-home__step">
-          <h3>1. Inspect the original fixture</h3>
-          <pre class="code" role="region" aria-label="Capture the fixture digest and inspect the original text" tabindex="0"><code>p="$HOME/.local/bin/plyrune"
-"$p" example &gt; fixture.json
-key=$("$p" snapshot &lt; fixture.json | jq -er .sha256)
-view() {
-  "$p" inspect "$key" config/server/api.env 8 23
-}
-view &lt; fixture.json</code></pre>
-          <p>Exit 0. The JSON field <code>text</code> contains <code>legacy_endpoint</code>. Offsets count UTF-8 bytes from zero; the end is exclusive.</p>
+          <h3>1. Find and preview</h3>
+          <pre class="code" role="region" aria-label="Find literal occurrences and preview a replacement" tabindex="0"><code>p="$HOME/.local/bin/plyrune"
+src=$(mktemp -d)
+mkdir "$src/config"
+printf 'host=old_host\n' &gt; "$src/config/app.env"
+"$p" refs --root "$src" config/ old_host
+"$p" preview --root "$src" config/ old_host new_host \
+  &gt; "$src/review.json"
+cat "$src/review.json"</code></pre>
+          <p>One match in <code>config/app.env</code>: bytes 5–13 (end excluded). The preview names the original text, replacement, file hashes and review ID. The file still says <code>host=old_host</code>.</p>
         </div>
         <div class="fixture-home__step">
-          <h3>2. Repeat after a different file changes</h3>
-          <pre class="code" role="region" aria-label="Change the notes in the input stream and repeat the inspection" tabindex="0"><code>jq '(.resources[] |
-  select(.path == "docs/notes.txt") |
-  .text) += "!"' fixture.json | view</code></pre>
-          <p>Exit 2. <code>inspect</code> writes <code>WrongSnapshot</code> to stderr and no view to stdout. Don’t treat that as empty text or silently substitute a new digest: decide whether to restart the step on the changed input.</p>
+          <h3>2. Choose the output directory</h3>
+          <pre class="code" role="region" aria-label="Write reviewed changes to an empty directory" tabindex="0"><code>out=$(mktemp -d)
+id=$(jq -er .review "$src/review.json")
+"$p" apply --root "$src" config/ old_host new_host \
+  --review "$id" --into "$out"
+cat "$out/config/app.env"</code></pre>
+          <p>The output reads <code>host=new_host</code>. For an intentional edit of the originals, use <code>--in-place</code> instead of <code>--into "$out"</code>. If the reviewed source changed, stop and preview again; don’t silently use a new ID.</p>
         </div>
       </div>
     </div>
@@ -115,32 +118,21 @@ view &lt; fixture.json</code></pre>
     <div class="wrap">
       <div class="section__head">
         <p class="eyebrow">Evidence / scope</p>
-        <h2 id="assurance-title">What the refusal tells you</h2>
+        <h2 id="assurance-title">What Plyrune checks, and what it doesn't</h2>
       </div>
       <div class="triad">
         <article aria-labelledby="guard-title">
-          <h3 id="guard-title">Proved for the release</h3>
-          <p>The <a href="https://github.com/plyrune-dev/plyrune/blob/v0.0.1-preview.1/proofs/claims.json">preview’s Lean proof record</a> covers the translated Rust guard: different snapshot keys are refused; equal keys use the byte-range and UTF-8 checks. Ignoring either half of the key broke that theorem.</p>
+          <h3 id="guard-title">Exact text, not symbols</h3>
+          <p><code>refs</code> finds literal UTF-8 byte sequences, including in comments or strings. It does not know whether two names refer to the same function. File scopes are explicit; a narrow scope cannot establish what you meant to change.</p>
         </article>
         <article aria-labelledby="bridge-title">
-          <h3 id="bridge-title">Tested, not proved</h3>
-          <p>Digest encoding, path lookup and CLI behavior are tested separately. The <a href="https://github.com/plyrune-dev/plyrune/issues/42">installed-binary checks</a> cover stale requests, invalid ranges and the display limit. A digest identifies input; it does not grant permission to read it.</p>
+          <h3 id="bridge-title">Review tied to the input</h3>
+          <p>The review binds the source, task and candidate. The <a href="https://github.com/plyrune-dev/plyrune/blob/v0.0.1-preview.2/proofs/claims.json">proof record</a> covers named Rust kernel decisions. The <a href="https://github.com/plyrune-dev/plyrune/issues/44">installed CLI checks</a> exercise actual files. Filesystem operations are tested, not proved.</p>
         </article>
         <article aria-labelledby="limits-title">
-          <h3 id="limits-title">Outside the preview</h3>
-          <p>No workspace search, editing or migration check. There are <a href="measurements.json">no measured agent-task outcomes</a> for speed, cost or success.</p>
+          <h3 id="limits-title">One writer, one file at a time</h3>
+          <p>Use a local tree you control; do not run another editor against it during apply. Each renamed file is visible separately. A crash can leave a mixed tree. Save the preview, compare before retrying, or prefer a separate output directory. <a href="https://github.com/plyrune-dev/plyrune/blob/main/docs/rfcs/2026-11-26-filesystem-edits.md">Supported filesystem profile and recovery</a>.</p>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section fixture-home fixture-home--section" aria-labelledby="next-title">
-    <div class="wrap">
-      <div class="section__head">
-        <p class="eyebrow">Source development · 25 November 2026</p>
-        <h2 id="next-title">Keep the file identity, not just the text</h2>
-        <p>Two config files can both say <code>legacy_endpoint</code>. The <a href="https://github.com/plyrune-dev/plyrune/issues/4">Rust library</a> lets a harness keep a capture from one file and refuses to resolve it against the other. It binds the store, snapshot, resource and byte range. This is available from source, not in the installed CLI.</p>
-        <p>The next question is about coverage: did a migration replace every required occurrence under <code>config/</code>, or only the ones the agent inspected? That needs a <a href="https://github.com/plyrune-dev/plyrune/issues/5">complete inventory</a>, including files with no matches. Neither the release nor a single capture answers it.</p>
       </div>
     </div>
   </section>
